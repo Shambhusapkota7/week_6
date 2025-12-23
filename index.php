@@ -1,7 +1,7 @@
 <?php
 include "db.php";
 
-// ADD STUDENT
+/* ADD STUDENT */
 if (isset($_POST['add'])) {
     $stmt = $conn->prepare(
         "INSERT INTO students (name, email, course) VALUES (?, ?, ?)"
@@ -11,23 +11,27 @@ if (isset($_POST['add'])) {
         $_POST['email'],
         $_POST['course']
     ]);
+    header("Location: index.php");
+    exit;
 }
 
-// DELETE STUDENT
+/* DELETE STUDENT */
 if (isset($_GET['delete'])) {
     $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
     $stmt->execute([$_GET['delete']]);
+    header("Location: index.php");
+    exit;
 }
 
-// FETCH STUDENTS
+/* FETCH STUDENTS */
 $stmt = $conn->query("SELECT * FROM students");
-$students = $stmt->fetchAll();
+$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student List</title>
+    <title>Student CRUD</title>
 </head>
 <body>
 
@@ -36,7 +40,7 @@ $students = $stmt->fetchAll();
     Name: <input type="text" name="name" required><br><br>
     Email: <input type="email" name="email" required><br><br>
     Course: <input type="text" name="course" required><br><br>
-    <button type="submit" name="add">Add Student</button>
+    <button type="submit" name="add">Add</button>
 </form>
 
 <hr>
@@ -48,19 +52,19 @@ $students = $stmt->fetchAll();
     <th>Name</th>
     <th>Email</th>
     <th>Course</th>
-    <th>Actions</th>
+    <th>Action</th>
 </tr>
 
 <?php foreach ($students as $s): ?>
 <tr>
-    <td><?= $s['id'] ?></td>
-    <td><?= $s['name'] ?></td>
-    <td><?= $s['email'] ?></td>
-    <td><?= $s['course'] ?></td>
+    <td><?= $s['id']; ?></td>
+    <td><?= $s['name']; ?></td>
+    <td><?= $s['email']; ?></td>
+    <td><?= $s['course']; ?></td>
     <td>
-        <a href="edit.php?id=<?= $s['id'] ?>">Edit</a> |
-        <a href="index.php?delete=<?= $s['id'] ?>" 
-           onclick="return confirm('Delete this student?')">Delete</a>
+        <a href="edit.php?id=<?= $s['id']; ?>">Edit</a> |
+        <a href="index.php?delete=<?= $s['id']; ?>"
+           onclick="return confirm('Are you sure?')">Delete</a>
     </td>
 </tr>
 <?php endforeach; ?>
